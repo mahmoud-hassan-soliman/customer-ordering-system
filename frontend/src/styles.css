@@ -1,0 +1,185 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: #1f2933;
+  background: #f5f7f8;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  border: 1px solid #2f5d62;
+  border-radius: 6px;
+  background: #2f5d62;
+  color: white;
+  cursor: pointer;
+  padding: 0.55rem 0.8rem;
+}
+
+button:hover,
+button.active {
+  background: #24484c;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid #b8c2c8;
+  border-radius: 6px;
+  padding: 0.55rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  color: #3e4c59;
+  font-size: 0.95rem;
+}
+
+.topbar {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(300px, 2fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #d9e2e7;
+  background: white;
+}
+
+.topbar h1,
+.topbar p,
+.panel h2,
+.empty {
+  margin: 0;
+}
+
+.topbar h1 {
+  font-size: 1.2rem;
+}
+
+.topbar p,
+.session,
+.row span,
+.order p,
+.empty {
+  color: #52616b;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.session {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: end;
+}
+
+main {
+  width: min(960px, calc(100% - 2rem));
+  margin: 1.5rem auto;
+}
+
+.panel {
+  display: grid;
+  gap: 1rem;
+  border: 1px solid #d9e2e7;
+  border-radius: 8px;
+  background: white;
+  padding: 1rem;
+}
+
+.panel-heading,
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.form {
+  display: grid;
+  gap: 0.85rem;
+  max-width: 420px;
+}
+
+.list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) 110px auto;
+  gap: 0.75rem;
+  align-items: end;
+  border: 1px solid #e4eaee;
+  border-radius: 8px;
+  padding: 0.85rem;
+}
+
+.row div,
+.order {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.order {
+  border: 1px solid #e4eaee;
+  border-radius: 8px;
+  padding: 0.85rem;
+}
+
+.order ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.message {
+  border-radius: 6px;
+  margin: 0;
+  padding: 0.7rem;
+}
+
+.message.success {
+  border: 1px solid #9ac7a7;
+  background: #eef8f1;
+  color: #1f6b3a;
+}
+
+.message.error {
+  border: 1px solid #e6a3a3;
+  background: #fff1f1;
+  color: #9b1c1c;
+}
+
+.total {
+  margin: 0.25rem 0 0;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    grid-template-columns: 1fr;
+  }
+
+  .session {
+    justify-content: start;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
