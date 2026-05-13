@@ -120,6 +120,51 @@ flowchart TD
 | MenuItem | id, name, price, available |
 | Order | id, customer_id, status, client_order_key, created_at |
 | OrderItem | id, order_id, menu_item_id, quantity, line_total |
+## Class Diagram
+
+```mermaid
+classDiagram
+    class User {
+        +id
+        +name
+        +email
+        +password_hash
+        +role
+    }
+
+    class MenuItem {
+        +id
+        +name
+        +price
+        +available
+    }
+
+    class Order {
+        +id
+        +customer_id
+        +status
+        +client_order_key
+        +created_at
+    }
+
+    class OrderItem {
+        +id
+        +order_id
+        +menu_item_id
+        +quantity
+        +line_total
+    }
+
+    User "1" --> "*" Order : places
+    Order "1" --> "*" OrderItem : contains
+    MenuItem "1" --> "*" OrderItem : referenced_by
+```
+
+
+
+
+
+
 
 ## Design Decisions
 
