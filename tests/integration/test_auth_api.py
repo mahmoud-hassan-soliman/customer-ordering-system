@@ -18,6 +18,30 @@ def test_fr_01_register_success_returns_201(client, customer_payload):
     assert "password" not in body
 
 
+def test_fr_14_kitchen_register_rejects_non_ejust_email(client, kitchen_payload):
+    """FR-14: kitchen staff registration requires @ejust.edu.eg email."""
+
+    response = client.post(
+        "/auth/register",
+        json={**kitchen_payload, "email": "salma.kitchen@gmail.com"},
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Kitchen staff email must end with @ejust.edu.eg"
+    }
+
+
+def test_fr_14_kitchen_register_allows_ejust_email(client, kitchen_payload):
+    """FR-14: kitchen staff registration allows EJUST domain staff email."""
+
+    response = client.post("/auth/register", json=kitchen_payload)
+
+    assert response.status_code == 201
+    assert response.json()["email"].endswith("@ejust.edu.eg")
+    assert response.json()["role"] == "kitchen"
+
+
 def test_fr_01_duplicate_register_returns_400_structured_error(client, customer_payload):
     """FR-01: duplicate email follows the API contract error response."""
 

@@ -18,6 +18,27 @@ def test_fr_01_registration_success_creates_customer(service_modules, customer_p
     assert getattr(user, "password_hash", None) != customer_payload["password"]
 
 
+def test_fr_14_kitchen_registration_requires_ejust_email(service_modules, kitchen_payload):
+    """FR-14: kitchen staff registration requires @ejust.edu.eg email."""
+
+    auth_service = service_modules["auth_service"]
+    invalid_payload = {**kitchen_payload, "email": "salma.kitchen@gmail.com"}
+
+    with pytest.raises(ValueError, match="@ejust.edu.eg"):
+        auth_service.register_user(invalid_payload)
+
+
+def test_fr_14_kitchen_registration_allows_ejust_email(service_modules, kitchen_payload):
+    """FR-14: kitchen staff registration accepts EJUST domain email."""
+
+    auth_service = service_modules["auth_service"]
+
+    user = auth_service.register_user(kitchen_payload)
+
+    assert user.email.endswith("@ejust.edu.eg")
+    assert user.role == "kitchen"
+
+
 def test_fr_01_duplicate_registration_rejected(service_modules, customer_payload):
     """FR-01: duplicate email registration is rejected."""
 

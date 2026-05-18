@@ -14,17 +14,17 @@ Current automated tests:
 
 | Layer | Location | Count | Evidence |
 | --- | --- | ---: | --- |
-| Unit | `tests/unit/` | 16 | Service-level tests for auth, menu retrieval, quantity validation, order creation, duplicate order keys, status updates, and token rejection. |
-| Integration | `tests/integration/` | 17 | FastAPI `TestClient` tests for `/auth/register`, `/auth/login`, `/menu`, `/orders`, `/orders/kitchen`, and `/orders/{id}/status`. |
+| Unit | `tests/unit/` | 20 | Service-level tests for auth, staff domain validation, menu retrieval, quantity validation, order creation, duplicate order keys, status updates, customer order tracking, and token rejection. |
+| Integration | `tests/integration/` | 23 | FastAPI `TestClient` tests for `/auth/register`, `/auth/login`, `/menu`, `/orders`, `/orders/my`, `/orders/kitchen`, and `/orders/{id}/status`. |
 | E2E | `frontend/tests/e2e/` | 2 | Playwright browser tests for homepage loading and register-login-menu workflow. |
 
-Total automated scenarios: 35.
+Total automated scenarios: 45.
 
 Actual ratio by collected tests:
 
-- Unit: 16 of 35, about 46 percent.
-- Integration: 17 of 35, about 49 percent.
-- E2E: 2 of 35, about 6 percent.
+- Unit: 20 of 45, about 44 percent.
+- Integration: 23 of 45, about 51 percent.
+- E2E: 2 of 45, about 5 percent.
 
 The suite is intentionally integration-heavy because the rubric emphasizes API contracts, traceability, and verification of observable system behavior. The E2E layer remains small, which preserves the pyramid principle that browser tests should validate critical workflows rather than duplicate every backend edge case.
 
@@ -37,6 +37,7 @@ Unit tests focus on business rules and edge-case padlocks:
   - FR-02 login success.
   - FR-03 invalid login rejection.
   - FR-13 invalid token rejection.
+  - FR-14 kitchen staff `@ejust.edu.eg` domain restriction.
   - NFR-02 password length boundary.
 - `tests/unit/test_menu_service.py`
   - FR-04 seeded menu retrieval.
@@ -48,6 +49,7 @@ Unit tests focus on business rules and edge-case padlocks:
   - FR-09 kitchen dashboard order listing.
   - FR-10 status update success.
   - FR-12 invalid status rejection.
+  - FR-16 customer order tracking and status refresh evidence.
 
 ## Integration Test Evidence
 
@@ -58,6 +60,7 @@ Integration tests verify the documented API contracts:
   - Duplicate registration returns 400 with `Email already registered`.
   - Login returns bearer token.
   - Invalid login returns 401.
+  - Kitchen registration outside `@ejust.edu.eg` returns 400.
 - `tests/integration/test_menu_orders_api.py`
   - Menu returns at least three items.
   - Invalid quantities return 400.
@@ -65,12 +68,15 @@ Integration tests verify the documented API contracts:
   - Empty cart returns 400.
   - Duplicate order key returns 400.
   - Invalid token returns 401.
+  - Mock payment method/status is returned with orders.
+  - Customer order tracking returns current order status and summary.
 - `tests/integration/test_kitchen_api.py`
   - Kitchen dashboard returns submitted orders.
   - Kitchen status update returns 200.
   - Customer access returns 403.
   - Invalid status `archived` returns 400 and preserves the old status.
   - Invalid kitchen token returns 401.
+  - Kitchen dashboard includes mock payment method/status.
 
 ## Playwright E2E Evidence
 
@@ -83,11 +89,12 @@ These tests connect the React UI to the running FastAPI backend and validate tha
 
 ## Screenshots Evidence
 
-The `screenshots/` folder is reserved for manual or Playwright-generated demo screenshots. Suggested screenshot placeholders:
+The `screenshots/` folder is reserved for manual or Playwright-generated demo screenshots. Suggested screenshots:
 
 - `screenshots/login-page.png`
 - `screenshots/menu-page.png`
 - `screenshots/cart-page.png`
+- `screenshots/order-tracking-page.png`
 - `screenshots/kitchen-dashboard.png`
 - `screenshots/playwright-run.png`
 
@@ -115,4 +122,3 @@ Playwright E2E tests:
 cd "/Volumes/My Macbook/Study/Semester 8/Software Engineering/Projects/FinalProject/frontend"
 npx playwright test tests/e2e
 ```
-

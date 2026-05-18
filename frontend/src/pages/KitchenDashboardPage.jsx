@@ -63,6 +63,9 @@ export default function KitchenDashboardPage({ auth }) {
                 <span>{order.status}</span>
               </div>
               <p>{order.customer_email}</p>
+              <p>
+                Payment: {order.payment_status} via {order.payment_method}
+              </p>
               <ul>
                 {order.items.map((item) => (
                   <li key={`${order.id}-${item.name}`}>
@@ -90,4 +93,3 @@ export default function KitchenDashboardPage({ auth }) {
     </section>
   );
 }
-

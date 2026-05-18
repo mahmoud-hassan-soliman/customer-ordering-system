@@ -22,7 +22,7 @@ Standard structured error shape:
 
 ### POST `/auth/register`
 
-Covers: FR-01, NFR-02
+Covers: FR-01, FR-14, NFR-02
 
 Headers:
 
@@ -47,6 +47,7 @@ Validation:
 - `email`: valid email-like string
 - `password`: minimum 8 characters
 - `role`: `customer` or `kitchen`
+- kitchen role requires an email ending with `@ejust.edu.eg`
 
 Success response `201`:
 
@@ -62,6 +63,7 @@ Success response `201`:
 Failure responses:
 
 - `400` duplicate email
+- `400` kitchen email outside `@ejust.edu.eg`
 - `422` invalid payload
 
 Example `400` response:
@@ -69,6 +71,14 @@ Example `400` response:
 ```json
 {
   "detail": "Email already registered"
+}
+```
+
+Example kitchen domain `400` response:
+
+```json
+{
+  "detail": "Kitchen staff email must end with @ejust.edu.eg"
 }
 ```
 
@@ -139,7 +149,7 @@ Metric: response time under 2 seconds for seeded demo data.
 
 ### POST `/orders`
 
-Covers: FR-05, FR-06, FR-07, FR-08, FR-13
+Covers: FR-05, FR-06, FR-07, FR-08, FR-13, FR-15, FR-16
 
 Headers:
 
@@ -153,6 +163,8 @@ Request:
 ```json
 {
   "client_order_key": "unique-client-key",
+  "payment_method": "card",
+  "payment_status": "paid",
   "items": [
     {
       "menu_item_id": 1,
@@ -168,6 +180,8 @@ Validation:
 - `items` must contain at least 1 item.
 - `quantity` must be an integer from 1 to 10.
 - Reused `client_order_key` must not create duplicate orders.
+- `payment_method` is optional and must be `cash`, `card`, or `wallet`.
+- `payment_status` is optional and must be `paid` or `unpaid`.
 
 Success response `201`:
 
@@ -182,7 +196,9 @@ Success response `201`:
       "line_total": 160.0
     }
   ],
-  "total": 160.0
+  "total": 160.0,
+  "payment_method": "card",
+  "payment_status": "paid"
 }
 ```
 
@@ -217,9 +233,55 @@ Example `403` response:
 }
 ```
 
+### GET `/orders/my`
+
+Covers: FR-13, FR-16, NFR-01
+
+Headers:
+
+```http
+Authorization: Bearer token-value
+```
+
+Authorization: customer role required.
+
+Success response `200`:
+
+```json
+[
+  {
+    "id": 1,
+    "status": "preparing",
+    "total": 160.0,
+    "payment_method": "card",
+    "payment_status": "paid",
+    "items": [
+      {
+        "name": "Chicken Sandwich",
+        "quantity": 2,
+        "line_total": 160.0
+      }
+    ]
+  }
+]
+```
+
+Failure responses:
+
+- `401` missing/invalid token
+- `403` authenticated non-customer user
+
+Example `401` response:
+
+```json
+{
+  "detail": "Unauthorized access"
+}
+```
+
 ### GET `/orders/kitchen`
 
-Covers: FR-09, FR-11, FR-13, NFR-01
+Covers: FR-09, FR-11, FR-13, FR-14, FR-15, NFR-01
 
 Headers:
 
@@ -238,6 +300,8 @@ Success response `200`:
     "customer_email": "mina@example.com",
     "status": "pending",
     "total": 160.0,
+    "payment_method": "card",
+    "payment_status": "paid",
     "items": [
       {
         "name": "Chicken Sandwich",

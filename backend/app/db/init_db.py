@@ -1,5 +1,6 @@
 """Database initialization and small menu seed."""
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.db.session import Base, engine
@@ -15,6 +16,7 @@ SEEDED_MENU = [
 
 def init_db() -> None:
     Base.metadata.create_all(bind=engine)
+    ensure_order_payment_columns()
     db = Session(bind=engine)
     try:
         seed_menu(db)
@@ -35,3 +37,19 @@ def seed_menu(db: Session) -> None:
 def reset_db() -> None:
     Base.metadata.drop_all(bind=engine)
     init_db()
+
+
+def ensure_order_payment_columns() -> None:
+    with engine.begin() as connection:
+        columns = {
+            row[1]
+            for row in connection.execute(text("PRAGMA table_info(orders)")).fetchall()
+        }
+        if columns and "payment_method" not in columns:
+            connection.execute(
+                text("ALTER TABLE orders ADD COLUMN payment_method VARCHAR NOT NULL DEFAULT 'cash'")
+            )
+        if columns and "payment_status" not in columns:
+            connection.execute(
+                text("ALTER TABLE orders ADD COLUMN payment_status VARCHAR NOT NULL DEFAULT 'unpaid'")
+            )

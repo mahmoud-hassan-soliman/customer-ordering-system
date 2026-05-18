@@ -19,7 +19,7 @@ AI assistance was used to:
 - Refactor Playwright E2E tests into Page Object Model structure.
 - Finalize documentation for verification, validation, testing pyramid evidence, Playwright automation, and TDP iteration evidence.
 
-AI assistance did not add unsupported features such as payments, notifications, analytics, Docker, Redis, PostgreSQL, cloud deployment, or advanced authentication.
+AI assistance did not add unsupported features such as real payment gateways, notifications, analytics, Docker, Redis, PostgreSQL, cloud deployment, or advanced authentication.
 
 ## Prompt Categories Used
 
@@ -103,4 +103,3 @@ The project scope and implementation constraints were explicitly controlled:
 ## AI Use Disclosure Summary
 
 Codex/AI assistance was used throughout the project as a guided development and documentation assistant. The final project artifacts remain aligned with the stated academic requirements: requirements discovery, traceability, software design, TDD evidence, testing, validation, and engineering process quality.
-

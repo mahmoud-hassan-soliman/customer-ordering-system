@@ -1,11 +1,11 @@
 """Router dependencies for token and role checks.
 
-Requirement coverage: FR-11, FR-13.
+Requirement coverage: FR-11, FR-13, FR-14.
 """
 
 from fastapi import Header, HTTPException
 
-from app.services.auth_service import require_valid_token
+from app.services.auth_service import KITCHEN_EMAIL_DOMAIN, require_valid_token
 
 
 def _extract_token(authorization: str | None) -> str:
@@ -38,4 +38,6 @@ def require_kitchen(current_user=Header(default=None, alias="Authorization")):
         raise HTTPException(status_code=401, detail=str(exc)) from exc
     if user.role != "kitchen":
         raise HTTPException(status_code=403, detail="Kitchen role required")
+    if not user.email.lower().endswith(KITCHEN_EMAIL_DOMAIN):
+        raise HTTPException(status_code=403, detail="Kitchen staff email domain required")
     return user

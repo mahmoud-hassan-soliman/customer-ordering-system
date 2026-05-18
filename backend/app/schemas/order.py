@@ -11,6 +11,8 @@ class OrderItemRequest(BaseModel):
 class CreateOrderRequest(BaseModel):
     client_order_key: str
     items: list[OrderItemRequest]
+    payment_method: str = "cash"
+    payment_status: str = "unpaid"
 
 
 class OrderItemResponse(BaseModel):
@@ -24,6 +26,8 @@ class OrderResponse(BaseModel):
     status: str
     items: list[OrderItemResponse]
     total: float
+    payment_method: str
+    payment_status: str
 
 
 class KitchenOrderItemResponse(BaseModel):
@@ -36,7 +40,24 @@ class KitchenOrderResponse(BaseModel):
     customer_email: str
     status: str
     total: float
+    payment_method: str
+    payment_status: str
     items: list[KitchenOrderItemResponse]
+
+
+class CustomerOrderItemResponse(BaseModel):
+    name: str
+    quantity: int
+    line_total: float
+
+
+class CustomerOrderResponse(BaseModel):
+    id: int
+    status: str
+    total: float
+    payment_method: str
+    payment_status: str
+    items: list[CustomerOrderItemResponse]
 
 
 class StatusUpdateRequest(BaseModel):
@@ -46,4 +67,3 @@ class StatusUpdateRequest(BaseModel):
 class StatusUpdateResponse(BaseModel):
     id: int
     status: str
-

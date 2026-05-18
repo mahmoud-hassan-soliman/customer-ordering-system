@@ -60,6 +60,9 @@ export default function RegisterPage() {
             <option value="kitchen">Kitchen</option>
           </select>
         </label>
+        {form.role === "kitchen" && (
+          <p className="hint">Kitchen staff emails must end with @ejust.edu.eg.</p>
+        )}
         <button type="submit">Create account</button>
       </form>
       <Message type="success">{message}</Message>
@@ -67,4 +70,3 @@ export default function RegisterPage() {
     </section>
   );
 }
-

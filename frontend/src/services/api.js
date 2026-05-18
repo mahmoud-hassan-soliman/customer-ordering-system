@@ -51,6 +51,12 @@ export function placeOrder(token, payload) {
   });
 }
 
+export function fetchCustomerOrders(token) {
+  return request("/orders/my", {
+    headers: authHeaders(token),
+  });
+}
+
 export function fetchKitchenOrders(token) {
   return request("/orders/kitchen", {
     headers: authHeaders(token),
@@ -64,4 +70,3 @@ export function updateOrderStatus(token, orderId, status) {
     body: JSON.stringify({ status }),
   });
 }
-

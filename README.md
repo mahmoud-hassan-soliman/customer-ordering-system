@@ -10,12 +10,14 @@ Implemented features:
 - View menu
 - Add items to cart
 - Place order
+- Mock payment method/status for demo purposes
+- Track customer order status
 - Kitchen dashboard
 - Update order status
 
 Intentionally out of scope:
 
-- Payments
+- Real payment gateway integration
 - Notifications
 - Analytics
 - Admin management systems
@@ -68,7 +70,7 @@ Backend organization:
 
 Frontend organization:
 
-- `frontend/src/pages/`: Register, login, menu, cart, and kitchen dashboard pages.
+- `frontend/src/pages/`: Register, login, menu, cart, order tracking, and kitchen dashboard pages.
 - `frontend/src/components/`: shared navigation and message components.
 - `frontend/src/services/api.js`: API client for the documented backend endpoints.
 
@@ -86,6 +88,7 @@ FinalProject/
 │   │   └── services/
 │   └── requirements.txt
 ├── docs/
+│   └── diagrams/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -114,6 +117,9 @@ FinalProject/
 - `docs/testing_pyramid_report.md`
 - `docs/playwright_automation.md`
 - `docs/tdp_iteration_evidence.md`
+- `docs/ai_prompt_appendix.md`
+- `docs/diagrams/system_sequence_diagram.md`
+- `docs/diagrams/activity_diagram.md`
 
 ## Backend Setup
 
@@ -212,10 +218,12 @@ npx playwright test tests/e2e
 2. Log in as the customer.
 3. View the seeded menu.
 4. Add an item to the cart.
-5. Place an order.
-6. Register or log in as kitchen staff.
-7. Open the kitchen dashboard.
-8. Update the order status.
+5. Select a mock payment method and place an order.
+6. Open customer order tracking and review the current status.
+7. Register or log in as kitchen staff.
+8. Open the kitchen dashboard.
+9. Review payment status and update the order status.
+10. Refresh customer order tracking to see the updated status.
 
 ## GitHub Structure Explanation
 
@@ -227,4 +235,3 @@ The repository is organized by engineering evidence:
 - `tests/` contains pytest unit and integration tests.
 - `screenshots/` is reserved for demo and validation screenshots.
 - `demo/` is reserved for presentation/demo support material.
-

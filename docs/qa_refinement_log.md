@@ -11,7 +11,10 @@ This log converts vague requirements into measurable criteria, as required by th
 | The system should avoid duplicate orders. | Duplicate conditions are undefined. | Reusing the same client order key must not create more than one order. | FR-08 |
 | Kitchen access should be protected. | "Protected" is vague. | Missing/customer token for kitchen routes must return 401 or 403 before modifying data. | FR-11 |
 | Tokens should be valid. | "Valid" needs an observable result. | Expired or malformed access tokens must return 401 before protected route logic reads or writes order data. | FR-13 |
-| The app should be maintainable. | Maintainability must be bounded. | No Docker, Redis, PostgreSQL, Redux, payments, analytics, or cloud deployment code. | NFR-03 |
+| Staff users should be restricted. | "Staff" needs a measurable domain rule. | Kitchen staff registration and access require email ending with `@ejust.edu.eg`. | FR-14 |
+| Payment should be demo-only. | "Payment" could imply real integration. | Mock payment stores only method and `paid`/`unpaid` status; no real gateway or transaction is used. | FR-15 |
+| Customers should see order progress. | "Progress" needs an observable refresh behavior. | Customer order tracking must show the latest status returned by `GET /orders/my` after kitchen updates. | FR-16 |
+| The app should be maintainable. | Maintainability must be bounded. | No Docker, Redis, PostgreSQL, Redux, real payment integration, analytics, or cloud deployment code. | NFR-03 |
 
 ## Senior QA Audit Decisions
 

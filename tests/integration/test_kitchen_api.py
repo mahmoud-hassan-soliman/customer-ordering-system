@@ -23,7 +23,27 @@ def test_fr_09_kitchen_dashboard_returns_orders(
 
     assert created.status_code == 201
     assert response.status_code == 200
-    assert any(order["id"] == created.json()["id"] for order in response.json())
+    stored = next(order for order in response.json() if order["id"] == created.json()["id"])
+    assert stored["payment_method"] == "cash"
+    assert stored["payment_status"] == "unpaid"
+
+
+def test_fr_15_kitchen_dashboard_shows_mock_payment_details(
+    client, auth_headers, kitchen_headers
+):
+    """FR-15: kitchen dashboard includes mock payment details."""
+
+    payload = order_payload(client_order_key="paid-kitchen-dashboard-order", quantity=1)
+    payload["payment_method"] = "wallet"
+    payload["payment_status"] = "paid"
+    created = client.post("/orders", headers=auth_headers, json=payload)
+
+    response = client.get("/orders/kitchen", headers=kitchen_headers)
+
+    assert created.status_code == 201
+    stored = next(order for order in response.json() if order["id"] == created.json()["id"])
+    assert stored["payment_method"] == "wallet"
+    assert stored["payment_status"] == "paid"
 
 
 def test_fr_10_kitchen_status_update_success(
@@ -93,4 +113,3 @@ def test_fr_13_invalid_token_rejected_from_kitchen_endpoint(client):
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Unauthorized access"}
-

@@ -52,6 +52,7 @@ The test suite locks down these boundary and failure cases:
 | Invalid token | Unit and integration tests return unauthorized access. |
 | Customer accessing kitchen endpoints | Integration tests return 403. |
 | Invalid status `archived` | Unit and integration tests return 400 and preserve the old status. |
+| Customer tracking after kitchen update | Unit and integration tests verify the customer sees the latest status. |
 
 ## Iterative Debugging Evidence
 
@@ -68,9 +69,13 @@ Regression tests were added first:
 
 The service was then changed minimally so duplicate email registration fails correctly. The frontend already displayed backend validation messages through the existing API error handling.
 
+## Customer Tracking Enhancement
+
+A final enhancement added failing tests first for customer order tracking. The tests initially failed because `list_customer_orders` and `GET /orders/my` did not exist. The backend then added only the read path needed for customers to refresh and see their own latest order status, payment status, and order summary.
+
 ## Current Regression Status
 
-The backend pytest suite currently includes 33 tests across unit and integration layers. Playwright adds browser-level smoke coverage for homepage loading and register-login-menu display.
+The backend pytest suite currently includes 43 tests across unit and integration layers. Playwright adds browser-level smoke coverage for homepage loading and register-login-menu display.
 
 The TDP evidence demonstrates:
 
@@ -79,4 +84,3 @@ The TDP evidence demonstrates:
 - Iterative debugging based on test output.
 - Regression test added before fixing a discovered bug.
 - Edge cases preserved as executable tests.
-

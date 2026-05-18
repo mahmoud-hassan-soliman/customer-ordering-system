@@ -99,6 +99,44 @@ def test_fr_10_status_update_success_changes_order_status(
     assert updated.status == "preparing"
 
 
+def test_fr_16_customer_order_tracking_lists_own_orders(
+    service_modules, customer_payload
+):
+    """FR-16: customer can retrieve their own order status and summary."""
+
+    order_service = service_modules["order_service"]
+    created = order_service.create_order(
+        customer_email=customer_payload["email"],
+        payload=order_payload(client_order_key="client-order-key-tracking", quantity=2),
+    )
+
+    orders = order_service.list_customer_orders(customer_payload["email"])
+
+    tracked = next(order for order in orders if order.id == created.id)
+    assert tracked.status == "pending"
+    assert tracked.payment_status == "unpaid"
+    assert tracked.total > 0
+    assert len(tracked.items) == 1
+
+
+def test_fr_16_customer_order_tracking_reflects_kitchen_status_update(
+    service_modules, customer_payload
+):
+    """FR-16: customer tracking shows the latest kitchen-updated status."""
+
+    order_service = service_modules["order_service"]
+    created = order_service.create_order(
+        customer_email=customer_payload["email"],
+        payload=order_payload(client_order_key="client-order-key-tracking-update", quantity=1),
+    )
+    order_service.update_order_status(created.id, "ready")
+
+    orders = order_service.list_customer_orders(customer_payload["email"])
+
+    tracked = next(order for order in orders if order.id == created.id)
+    assert tracked.status == "ready"
+
+
 def test_fr_12_invalid_status_transition_rejected_and_original_status_kept(
     service_modules, customer_payload
 ):
@@ -115,4 +153,3 @@ def test_fr_12_invalid_status_transition_rejected_and_original_status_kept(
 
     unchanged = order_service.get_order(created.id)
     assert unchanged.status == "pending"
-

@@ -14,6 +14,8 @@ class Order(Base):
     status = Column(String, default="pending", nullable=False)
     client_order_key = Column(String, unique=True, index=True, nullable=False)
     total = Column(Float, default=0.0, nullable=False)
+    payment_method = Column(String, default="cash", nullable=False)
+    payment_status = Column(String, default="unpaid", nullable=False)
 
     items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
 
@@ -29,4 +31,3 @@ class OrderItem(Base):
 
     order = relationship("Order", back_populates="items")
     menu_item = relationship("MenuItem")
-

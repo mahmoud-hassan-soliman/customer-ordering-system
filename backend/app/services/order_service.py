@@ -1,6 +1,6 @@
 """Order service functions.
 
-Requirement coverage: FR-05, FR-06, FR-07, FR-08, FR-09, FR-10, FR-12.
+Requirement coverage: FR-05, FR-06, FR-07, FR-08, FR-09, FR-10, FR-12, FR-15, FR-16.
 """
 
 from app.db.init_db import init_db
@@ -10,6 +10,8 @@ from app.models.order import Order, OrderItem
 
 
 ALLOWED_STATUSES = {"pending", "preparing", "ready", "completed"}
+PAYMENT_METHODS = {"cash", "card", "wallet"}
+PAYMENT_STATUSES = {"paid", "unpaid"}
 
 
 def validate_order_items(items: list[dict]) -> None:
@@ -25,6 +27,12 @@ def create_order(customer_email: str, payload: dict) -> Order:
     init_db()
     items = payload["items"]
     validate_order_items(items)
+    payment_method = payload.get("payment_method", "cash")
+    payment_status = payload.get("payment_status", "unpaid")
+    if payment_method not in PAYMENT_METHODS:
+        raise ValueError("Invalid payment method")
+    if payment_status not in PAYMENT_STATUSES:
+        raise ValueError("Invalid payment status")
 
     db = SessionLocal()
     try:
@@ -41,6 +49,8 @@ def create_order(customer_email: str, payload: dict) -> Order:
             status="pending",
             client_order_key=payload["client_order_key"],
             total=0.0,
+            payment_method=payment_method,
+            payment_status=payment_status,
         )
         db.add(order)
         db.flush()
@@ -99,6 +109,24 @@ def list_kitchen_orders() -> list[Order]:
         db.close()
 
 
+def list_customer_orders(customer_email: str) -> list[Order]:
+    init_db()
+    db = SessionLocal()
+    try:
+        orders = (
+            db.query(Order)
+            .filter(Order.customer_email == customer_email)
+            .order_by(Order.id.desc())
+            .all()
+        )
+        for order in orders:
+            _load_order_items(db, order)
+            db.expunge(order)
+        return orders
+    finally:
+        db.close()
+
+
 def get_order(order_id: int) -> Order:
     init_db()
     db = SessionLocal()
@@ -136,4 +164,3 @@ def update_order_status(order_id: int, status: str) -> Order:
 def _load_order_items(db, order: Order) -> None:
     for item in order.items:
         _ = item.menu_item.name
-

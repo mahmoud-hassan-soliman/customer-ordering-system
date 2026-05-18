@@ -18,6 +18,9 @@ export default function Navigation({ page, setPage, auth, cartCount, onLogout })
         <button className={page === "cart" ? "active" : ""} onClick={() => setPage("cart")}>
           Cart ({cartCount})
         </button>
+        <button className={page === "orders" ? "active" : ""} onClick={() => setPage("orders")}>
+          Orders
+        </button>
         <button className={page === "kitchen" ? "active" : ""} onClick={() => setPage("kitchen")}>
           Kitchen
         </button>
@@ -35,4 +38,3 @@ export default function Navigation({ page, setPage, auth, cartCount, onLogout })
     </header>
   );
 }
-

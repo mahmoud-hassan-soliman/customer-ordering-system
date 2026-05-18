@@ -9,7 +9,7 @@ CUSTOMER_USER = {
 
 KITCHEN_USER = {
     "name": "Salma Kitchen",
-    "email": "salma.kitchen@example.com",
+    "email": "salma.kitchen@ejust.edu.eg",
     "password": "kitchen123",
     "role": "kitchen",
 }
@@ -34,4 +34,3 @@ def order_payload(client_order_key: str = VALID_CLIENT_ORDER_KEY, quantity: int 
 
 def empty_order_payload(client_order_key: str = "client-order-key-empty") -> dict:
     return {"client_order_key": client_order_key, "items": []}
-

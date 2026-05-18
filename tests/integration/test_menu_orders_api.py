@@ -48,6 +48,68 @@ def test_fr_06_valid_order_placement_returns_201(client, auth_headers):
     body = response.json()
     assert body["status"] == "pending"
     assert body["total"] > 0
+    assert body["payment_method"] == "cash"
+    assert body["payment_status"] == "unpaid"
+
+
+def test_fr_15_order_accepts_mock_payment_details(client, auth_headers):
+    """FR-15: mock payment method/status are stored with the order."""
+
+    payload = order_payload(client_order_key="client-order-key-paid", quantity=1)
+    payload["payment_method"] = "card"
+    payload["payment_status"] = "paid"
+
+    response = client.post("/orders", headers=auth_headers, json=payload)
+
+    assert response.status_code == 201
+    body = response.json()
+    assert body["payment_method"] == "card"
+    assert body["payment_status"] == "paid"
+
+
+def test_fr_16_customer_can_track_own_order(client, auth_headers):
+    """FR-16: GET /orders/my returns customer order status and summary."""
+
+    created = client.post(
+        "/orders",
+        headers=auth_headers,
+        json=order_payload(client_order_key="customer-tracking-order", quantity=2),
+    )
+
+    response = client.get("/orders/my", headers=auth_headers)
+
+    assert created.status_code == 201
+    assert response.status_code == 200
+    tracked = next(order for order in response.json() if order["id"] == created.json()["id"])
+    assert tracked["status"] == "pending"
+    assert tracked["payment_status"] == "unpaid"
+    assert tracked["total"] > 0
+    assert tracked["items"][0]["quantity"] == 2
+
+
+def test_fr_16_customer_tracking_reflects_kitchen_status_update(
+    client, auth_headers, kitchen_headers
+):
+    """FR-16: customer tracking reflects the latest kitchen status update."""
+
+    created = client.post(
+        "/orders",
+        headers=auth_headers,
+        json=order_payload(client_order_key="customer-tracking-status-update", quantity=1),
+    )
+    order_id = created.json()["id"]
+    update = client.patch(
+        f"/orders/{order_id}/status",
+        headers=kitchen_headers,
+        json={"status": "preparing"},
+    )
+
+    response = client.get("/orders/my", headers=auth_headers)
+
+    assert created.status_code == 201
+    assert update.status_code == 200
+    tracked = next(order for order in response.json() if order["id"] == order_id)
+    assert tracked["status"] == "preparing"
 
 
 def test_fr_07_empty_cart_returns_400_structured_error(client, auth_headers):
@@ -85,4 +147,3 @@ def test_fr_13_invalid_token_rejected_before_order_creation(client):
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Unauthorized access"}
-

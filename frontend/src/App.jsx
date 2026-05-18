@@ -5,6 +5,7 @@ import CartPage from "./pages/CartPage.jsx";
 import KitchenDashboardPage from "./pages/KitchenDashboardPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import MenuPage from "./pages/MenuPage.jsx";
+import OrdersPage from "./pages/OrdersPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 
 const storedToken = localStorage.getItem("access_token") || "";
@@ -66,8 +67,12 @@ export default function App() {
           cart={cart}
           onRemoveItem={removeFromCart}
           onClearCart={() => setCart([])}
+          onOrderPlaced={() => setPage("orders")}
         />
       );
+    }
+    if (page === "orders") {
+      return <OrdersPage auth={auth} />;
     }
     if (page === "kitchen") {
       return <KitchenDashboardPage auth={auth} />;
@@ -88,4 +93,3 @@ export default function App() {
     </>
   );
 }
-

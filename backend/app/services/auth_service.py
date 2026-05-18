@@ -1,6 +1,6 @@
 """Authentication service functions.
 
-Requirement coverage: FR-01, FR-02, FR-03, FR-13, NFR-02.
+Requirement coverage: FR-01, FR-02, FR-03, FR-13, FR-14, NFR-02.
 """
 
 from dataclasses import dataclass
@@ -14,6 +14,9 @@ from app.auth.security import (
 from app.db.init_db import init_db
 from app.db.session import SessionLocal
 from app.models.user import User
+
+
+KITCHEN_EMAIL_DOMAIN = "@ejust.edu.eg"
 
 
 @dataclass
@@ -32,6 +35,8 @@ def register_user(payload: dict) -> User:
     role = payload.get("role", "customer")
     if role not in {"customer", "kitchen"}:
         raise ValueError("role must be customer or kitchen")
+    if role == "kitchen" and not payload["email"].lower().endswith(KITCHEN_EMAIL_DOMAIN):
+        raise ValueError("Kitchen staff email must end with @ejust.edu.eg")
 
     db = SessionLocal()
     try:

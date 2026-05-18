@@ -27,6 +27,14 @@ def kitchen_orders(current_user=Depends(require_kitchen)):
     return [_kitchen_order_response(order) for order in order_service.list_kitchen_orders()]
 
 
+@router.get("/orders/my")
+def customer_orders(current_user=Depends(require_customer)):
+    return [
+        _customer_order_response(order)
+        for order in order_service.list_customer_orders(current_user.email)
+    ]
+
+
 @router.patch("/orders/{order_id}/status")
 def update_order_status(
     order_id: int,
@@ -55,6 +63,8 @@ def _order_response(order):
             for item in order.items
         ],
         "total": order.total,
+        "payment_method": order.payment_method,
+        "payment_status": order.payment_status,
     }
 
 
@@ -64,8 +74,28 @@ def _kitchen_order_response(order):
         "customer_email": order.customer_email,
         "status": order.status,
         "total": order.total,
+        "payment_method": order.payment_method,
+        "payment_status": order.payment_status,
         "items": [
             {"name": item.menu_item.name, "quantity": item.quantity}
+            for item in order.items
+        ],
+    }
+
+
+def _customer_order_response(order):
+    return {
+        "id": order.id,
+        "status": order.status,
+        "total": order.total,
+        "payment_method": order.payment_method,
+        "payment_status": order.payment_status,
+        "items": [
+            {
+                "name": item.menu_item.name,
+                "quantity": item.quantity,
+                "line_total": item.line_total,
+            }
             for item in order.items
         ],
     }

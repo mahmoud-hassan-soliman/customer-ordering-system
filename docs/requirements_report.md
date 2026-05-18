@@ -15,7 +15,7 @@ The selected subsystem is a small Customer Ordering System. The grading goal is 
 
 | Actor | Rationale | Main Goals |
 | --- | --- | --- |
-| Customer | Initiates registration, login, menu browsing, cart actions, and order placement. | Create account, log in, view menu, add items, submit order. |
+| Customer | Initiates registration, login, menu browsing, cart actions, order placement, and order tracking. | Create account, log in, view menu, add items, submit order, track current order status. |
 | Kitchen Staff | Initiates order status changes after receiving customer orders. | View pending orders, update order status accurately. |
 
 ### Supporting Actors
@@ -24,7 +24,7 @@ The selected subsystem is a small Customer Ordering System. The grading goal is 
 | --- | --- | --- |
 | Authentication Service | Supports identity checks for protected actions. | Validate credentials, issue simple access token, reject invalid access. |
 | Menu Data Store | Supplies item names, prices, and availability. | Provide menu list to customers and tests. |
-| Order Data Store | Persists cart-derived orders and status changes. | Store orders, items, quantities, statuses, timestamps. |
+| Order Data Store | Persists cart-derived orders, mock payment fields, and status changes. | Store orders, items, quantities, payment status, statuses, timestamps. |
 
 ### Offstage Actors
 
@@ -77,9 +77,12 @@ Need: The system must enforce boundaries at API level, not only in the UI.
 | FR-11 | Unauthorized users cannot access kitchen actions. | Persona edge case. | Must | Missing or customer token returns HTTP 401 or 403. |
 | FR-12 | Invalid order status transitions are rejected. | Edge case and race prevention. | Should | Unsupported status returns HTTP 400 and original status remains unchanged. |
 | FR-13 | Expired or invalid access tokens are rejected before protected actions are executed. | Authentication edge case. | Must | Protected routes return HTTP 401 and perform no data read/write action. |
+| FR-14 | Kitchen staff registration and access require an email ending with `@ejust.edu.eg`. | Domain restriction for staff workflow. | Must | Non-EJUST kitchen registration returns HTTP 400 and kitchen access requires the EJUST staff domain. |
+| FR-15 | A lightweight mock payment status is captured with each order. | Demo-friendly payment simulation. | Should | Order responses and kitchen dashboard show payment method and `paid`/`unpaid` status without real payment processing. |
+| FR-16 | A customer can view the latest status, payment status, and summary for their own orders. | Customer order tracking enhancement. | Should | Customer order tracking returns only the logged-in customer's orders and reflects kitchen status updates after refresh. |
 | NFR-01 | API response time for normal demo data is under 2 seconds. | QA refinement metric. | Must | Verified by integration/E2E tests or documented manual timing. |
 | NFR-02 | Password length must be at least 8 characters. | Measurable security boundary. | Must | Registration with fewer than 8 chars returns HTTP 422 or 400. |
-| NFR-03 | The implementation remains small and maintainable. | Project instruction and rubric fit. | Must | No Docker, Redis, PostgreSQL, Redux, payment, analytics, or cloud code. |
+| NFR-03 | The implementation remains small and maintainable. | Project instruction and rubric fit. | Must | No Docker, Redis, PostgreSQL, Redux, real payment integration, analytics, or cloud code. |
 
 ## Hidden Requirements and Edge Cases
 
@@ -93,6 +96,9 @@ Need: The system must enforce boundaries at API level, not only in the UI.
 | EC-06 | Invalid login credentials. | FR-03 | Return a generic failed-login response without issuing a token. |
 | EC-07 | Order update race condition or stale status. | FR-12 | Reject unsupported transitions and verify unchanged persisted status. |
 | EC-08 | Expired or invalid access token on protected action. | FR-13 | Return 401 before protected order or kitchen logic executes. |
+| EC-09 | Non-EJUST email attempts kitchen staff registration. | FR-14 | Return 400 with a staff-domain validation message. |
+| EC-10 | Customer marks mock payment as unpaid. | FR-15 | Store and display `unpaid` status for kitchen visibility. |
+| EC-11 | Kitchen updates an order after customer placed it. | FR-16 | Customer tracking refresh shows the updated status. |
 
 ## Requirement Quality Rules
 

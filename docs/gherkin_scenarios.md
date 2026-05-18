@@ -6,7 +6,7 @@ These scenarios describe the implemented Customer Ordering System only. They ali
 
 ```gherkin
 Feature: User registration
-  Covers: FR-01, NFR-02
+  Covers: FR-01, FR-14, NFR-02
 
   Scenario: Register a new customer successfully
     Given no user exists with email "mina@example.com"
@@ -16,10 +16,16 @@ Feature: User registration
     And the response should not include the password
 
   Scenario: Register a kitchen staff account successfully
-    Given no user exists with email "salma.kitchen@example.com"
-    When the user registers with name "Salma", email "salma.kitchen@example.com", password "kitchen123", and role "kitchen"
+    Given no user exists with email "salma.kitchen@ejust.edu.eg"
+    When the user registers with name "Salma", email "salma.kitchen@ejust.edu.eg", password "kitchen123", and role "kitchen"
     Then the API should return status 201
     And the response role should be "kitchen"
+
+  Scenario: Reject kitchen staff registration outside the EJUST domain
+    Given no user exists with email "salma.kitchen@gmail.com"
+    When the user registers with name "Salma", email "salma.kitchen@gmail.com", password "kitchen123", and role "kitchen"
+    Then the API should return status 400
+    And the response detail should mention "@ejust.edu.eg"
 
   Scenario: Reject duplicate email registration
     Given a user already exists with email "mina@example.com"
@@ -93,7 +99,7 @@ Feature: Menu retrieval and cart building
 
 ```gherkin
 Feature: Customer order placement
-  Covers: FR-06, FR-07, FR-08, FR-13
+  Covers: FR-06, FR-07, FR-08, FR-13, FR-15
 
   Background:
     Given a customer is registered and logged in
@@ -101,10 +107,13 @@ Feature: Customer order placement
 
   Scenario: Place an order from a non-empty cart
     Given the cart contains menu item 1 with quantity 2
+    And the customer selects mock payment method "card"
+    And the mock payment is confirmed as "paid"
     And the client order key is new
     When the customer places the order
     Then the API should return status 201
     And the order status should be "pending"
+    And the payment status should be "paid"
     And the response should include the ordered item and total
 
   Scenario: Reject an empty cart
@@ -136,21 +145,42 @@ Feature: Protected order actions
     And no order should be created
 ```
 
+```gherkin
+Feature: Customer order tracking
+  Covers: FR-13, FR-16, NFR-01
+
+  Background:
+    Given a customer is registered and logged in
+    And the customer has placed an order with status "pending"
+
+  Scenario: Customer views their own order status and summary
+    When the customer opens order tracking
+    Then the API should return status 200
+    And the response should include the order status
+    And the response should include payment status
+    And the response should include item summary and total
+
+  Scenario: Customer sees latest status after kitchen update
+    Given kitchen staff updates the order status to "preparing"
+    When the customer refreshes order tracking
+    Then the displayed order status should be "Preparing"
+```
+
 ## Kitchen Dashboard
 
 ```gherkin
 Feature: Kitchen dashboard
-  Covers: FR-09, FR-11, FR-13, NFR-01
+  Covers: FR-09, FR-11, FR-13, FR-14, FR-15, NFR-01
 
   Background:
     Given at least one order exists with status "pending"
 
   Scenario: Kitchen staff views active orders
-    Given a kitchen staff user is logged in
+    Given a kitchen staff user with email ending "@ejust.edu.eg" is logged in
     When the kitchen staff requests the kitchen dashboard
     Then the API should return status 200
     And the response should include active orders
-    And each order should include id, customer email, status, total, and items
+    And each order should include id, customer email, status, total, payment method, payment status, and items
 
   Scenario: Reject customer access to kitchen dashboard
     Given a customer is logged in
@@ -169,20 +199,20 @@ Feature: Kitchen dashboard
 
 ```gherkin
 Feature: Kitchen order status update
-  Covers: FR-10, FR-11, FR-12, FR-13
+  Covers: FR-10, FR-11, FR-12, FR-13, FR-14
 
   Background:
     Given an order exists with status "pending"
 
   Scenario: Kitchen staff updates an order status successfully
-    Given a kitchen staff user is logged in
+    Given a kitchen staff user with email ending "@ejust.edu.eg" is logged in
     When the kitchen staff updates the order status to "preparing"
     Then the API should return status 200
     And the response should include the order id
     And the order status should be "preparing"
 
   Scenario: Reject invalid order status
-    Given a kitchen staff user is logged in
+    Given a kitchen staff user with email ending "@ejust.edu.eg" is logged in
     When the kitchen staff updates the order status to "archived"
     Then the API should return status 400
     And the response detail should be "Invalid order status"
@@ -222,4 +252,3 @@ Feature: Frontend smoke workflows
     And the menu page should display "Pasta Bowl"
     And the menu page should display "Fresh Juice"
 ```
-
