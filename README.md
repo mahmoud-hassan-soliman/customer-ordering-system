@@ -106,6 +106,12 @@ FinalProject/
 
 ## Documentation
 
+Primary reviewer document:
+
+- `docs/FINAL_DOCUMENTATION_PACKAGE.md`
+
+Supporting source documents:
+
 - `docs/requirements_report.md`
 - `docs/design_specification.md`
 - `docs/validation_report.md`
