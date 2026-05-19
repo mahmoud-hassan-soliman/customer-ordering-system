@@ -3,13 +3,13 @@
 Customer Ordering System  
 Software Engineering Term Project
 
-This master document consolidates the important documentation from the project `docs/` folder into one PDF-ready, GitHub-readable package for academic submission, demo discussion, and grading review. The original source markdown files remain in place for file-level traceability, but reviewers can use this document as the primary navigation point.
+This package consolidates the project documentation from the `docs/` folder into a single PDF-ready academic report. The original source markdown files remain available for file-level traceability.
 
 ## Documentation Index
 
-### How To Use This Package
+### Document Scope
 
-Open this file during discussion or demo first. It is organized around the rubric deliverables and includes requirements, traceability, design, UML diagrams, API contracts, testing evidence, validation evidence, Playwright/POM evidence, and the AI assistance appendix.
+The report is organized around the rubric deliverables and includes requirements, traceability, design, UML diagrams, API contracts, testing evidence, validation evidence, Playwright/POM evidence, and the AI assistance appendix.
 
 ### Rubric Coverage Map
 
@@ -39,18 +39,9 @@ Open this file during discussion or demo first. It is organized around the rubri
 | `docs/verification_vs_validation.md` | 13. D4 Verification vs Validation |
 | `docs/ai_prompt_appendix.md` | 14. AI Assistance Appendix |
 
-### Quick Discussion Path
+### Report Organization
 
-1. Start with Section 1 for requirements and actor/persona discovery.
-2. Move to Section 2 for traceability and orphan-check evidence.
-3. Use Sections 3 through 6 for architecture, UML, and API design discussion.
-4. Use Sections 9 through 11 for TDD and testing evidence.
-5. Use Sections 12 and 13 for validation and verification discussion.
-6. Use Section 14 for the AI assistance appendix.
-
-### Export Notes
-
-This file is suitable for PDF export from GitHub, VS Code Markdown preview, Typora, Obsidian, or Pandoc. Mermaid diagrams should be rendered by a Markdown viewer with Mermaid support, or exported separately if the PDF renderer does not support Mermaid.
+The major sections are arranged to support requirements review, design review, testing evidence review, validation review, and appendix review in a formal academic submission.
 
 ---
 
@@ -1867,4 +1858,3 @@ The project scope and implementation constraints were explicitly controlled:
 Codex/AI assistance was used throughout the project as a guided development and documentation assistant. The final project artifacts remain aligned with the stated academic requirements: requirements discovery, traceability, software design, TDD evidence, testing, validation, and engineering process quality.
 
 ---
-
